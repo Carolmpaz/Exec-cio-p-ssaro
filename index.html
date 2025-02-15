@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Define o conjunto de caracteres a ser utilizado na exibição do conteúdo de um site -->
+    <meta charset="UTF-8">
+       
+    <!-- Fornece ao navegador instruções sobre como controlar o dimensionamento da página quando acessada de diferentes tamanhos de dispositivos -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Faz referência ao Phaser -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+
+    <!-- Adiciona um título a página -->
+    <title>Exercício do Pássaro</title>
+    <style>
+        /* Centraliza o jogo na tela */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        var config = {
+            type: Phaser.AUTO,
+            scale: {
+                mode: Phaser.Scale.RESIZE, // Permite que o jogo se ajuste ao tamanho da janela
+                autoCenter: Phaser.Scale.CENTER_BOTH, // Centraliza o jogo na tela
+            },
+            scene: {
+                preload: preload, // Carrega os arquivos necessários
+                create: create,   // Cria os elementos da cena
+                update: update    // Atualiza a cena a cada frame
+            }
+        };
+    
+        var game = new Phaser.Game(config);
+        var passarinho, background;
+        
+
+        // Função para carregar os assets do jogo
+        function preload() {
+            this.load.image('bg', 'assets/background.jpg'); 
+            this.load.spritesheet('bird', 'assets/bird-purple.png', { frameWidth: 75, frameHeight: 75 }); 
+          
+        }
+    
+        // Função de criação dos elementos do jogo
+        function create() {
+            var scene = this;
+            
+            // Adiciona a imagem de fundo e ajusta ao tamanho da tela
+            background = this.add.image(0, 0, 'bg').setOrigin(0, 0);
+            background.setDisplaySize(this.scale.width, this.scale.height);
+            
+            // Criação do pássaro
+            passarinho = this.add.sprite(100, 300, 'bird').setScale(1.3);
+     
+
+            // Criação da animação para o primeiro pássaro
+            this.anims.create({
+                key: 'fly',
+                frames: this.anims.generateFrameNumbers('bird', { start: 0, end: 7 }),
+                frameRate: 10,
+                repeat: -1 
+            });
+
+          
+
+            // Inicia as animações do pássaro
+            passarinho.anims.play('fly', true);
+         
+
+            // Função para ajustar o tamanho do fundo quando a tela for redimensionada
+            this.scale.on('resize', function (gameSize) {
+                var width = gameSize.width;
+                var height = gameSize.height;
+                background.setDisplaySize(width, height);
+            });
+        }
+    
+        // Função de atualização chamada a cada frame
+        function update() {
+
+            // Movimentação horizontal do pássaro
+            if (passarinho.ida) {
+                // Faz com que o passarinho ande para direira
+                passarinho.x += 5;
+                // Cria um limite para a movimetação do pássaro
+                if (passarinho.x >= this.scale.width - 50) {
+                    // Inverte a direção do pássaro
+                    passarinho.setFlip(true, false); 
+                    passarinho.ida = false;
+                }
+            } else {
+                // Faz com que o passarinho ande para esquerda
+                passarinho.x -= 5;
+                // Cria um limite para a movimetação do pássaro
+                if (passarinho.x <= 50) {
+                    passarinho.setFlip(false, false);
+                    passarinho.ida = true;
+                }
+            }
+
+            // Movimento vertical do primeiro pássaro
+            if (passarinho.subindo) {
+                // Faz com que o passarinho desça
+                passarinho.y -= 5;
+                // Cria um limite para a movimetação do pássaro
+                if (passarinho.y <= 50) {
+                    passarinho.subindo = false;
+                }
+            } else {
+                // Faz com que o passarinho suba
+                passarinho.y += 5;
+                // Cria um limite para a movimetação do pássaro
+                if (passarinho.y >= this.scale.height - 50) {
+                    passarinho.subindo = true;
+                }
+            }
+        }
+
+
+    </script>
+</body>
+</html>
